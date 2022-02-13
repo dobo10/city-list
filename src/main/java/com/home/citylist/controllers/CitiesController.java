@@ -26,8 +26,12 @@ public class CitiesController {
     }
 
     @GetMapping("v1")
-    public List<CityDto> getCities() {
-        return cityService.getAll();
+    public ResponseEntity<List<CityDto>> getCities(
+            @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = "5") Integer size) {
+        return cityService.getAll(page, size)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/v1/{id}")
@@ -49,6 +53,5 @@ public class CitiesController {
         return cityService.update(updateDto)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
-
     }
 }
