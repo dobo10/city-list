@@ -1,4 +1,6 @@
 package com.home.citylist.dto;
 
-public record CityUpdateDto(long id, String name, String photo) {
+import javax.validation.constraints.NotEmpty;
+
+public record CityUpdateDto(long id, @NotEmpty String name, @NotEmpty String photo) {
 }

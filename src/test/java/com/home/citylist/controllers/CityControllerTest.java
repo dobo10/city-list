@@ -130,6 +130,17 @@ class CityControllerTest {
     }
 
     @Test
+    void update_whenRequestBodyNotValid_shouldReturnBadRequest() throws Exception {
+        CityUpdateDto updateDto = new CityUpdateDto(1, "", "");
+        String requestBody = objectMapper.writeValueAsString(updateDto);
+
+        this.mockMvc.perform(put(API_ROOT_PATH + "/v1")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void update_whenCityNotfound_shouldReturnStatusNotFound() throws Exception {
         CityUpdateDto updateDto = constructUpdateDto();
         String requestBody = objectMapper.writeValueAsString(updateDto);
