@@ -4,12 +4,16 @@ import com.home.citylist.dto.CityDto;
 import com.home.citylist.mappers.CityMapper;
 import com.home.citylist.models.City;
 import com.home.citylist.repositories.CityRepository;
+import liquibase.pro.packaged.C;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +23,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,25 +48,30 @@ class CityServiceTest {
         List<CityDto> cityDtos = Collections.singletonList(cityDto);
         City city = constructCity();
         List<City> cities = Collections.singletonList(city);
-        when(cityRepository.findAllCities(PageRequest.of(offset, limit))).thenReturn(Optional.of(cities));
+
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by("id"));
+        Page<City> pageResult = new PageImpl<>(cities, pageRequest, cities.size());
+
+        when(cityRepository.findAll(pageRequest)).thenReturn(pageResult);
         when(cityMapper.mapToCityDtos(cities)).thenReturn(cityDtos);
 
-        Optional<List<CityDto>> result = serviceToTest.getAll(offset, limit);
+        List<CityDto> result = serviceToTest.getAll(offset, limit);
 
-        assertTrue(result.isPresent());
-        assertThat(result.get().get(0).id()).isEqualTo(CITY_ID);
-        assertThat(result.get().get(0).name()).isEqualTo(CITY_NAME);
+        assertThat(result.get(0).id()).isEqualTo(CITY_ID);
+        assertThat(result.get(0).name()).isEqualTo(CITY_NAME);
     }
 
     @Test
     public void getAll_whenNoCitiesFound_shouldReturnEmptyOptional() {
         int offset = 0;
         int limit = 5;
-        when(cityRepository.findAllCities(PageRequest.of(offset, limit))).thenReturn(Optional.of(new ArrayList<>()));
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by("id"));
+        Page<City> pageResult = new PageImpl<>(new ArrayList<>(), pageRequest, 0);
+        when(cityRepository.findAll(pageRequest)).thenReturn(pageResult);
 
-        Optional<List<CityDto>> result = serviceToTest.getAll(offset, limit);
+        List<CityDto> result = serviceToTest.getAll(offset, limit);
 
-        assertFalse(result.isPresent());
+        assertThat(result.size()).isZero();
     }
 
     @Test

@@ -17,21 +17,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/cities", produces = {MediaType.APPLICATION_JSON_VALUE})
-public class CitiesController {
+public class CityController {
 
     private final CityService cityService;
 
-    public CitiesController(CityService cityService) {
+    public CityController(CityService cityService) {
         this.cityService = cityService;
     }
 
     @GetMapping("v1")
-    public ResponseEntity<List<CityDto>> getCities(
+    public List<CityDto> getCities(
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(value = "size", required = false, defaultValue = "5") Integer size) {
-        return cityService.getAll(page, size)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return cityService.getAll(page, size);
     }
 
     @GetMapping("/v1/{id}")
@@ -41,8 +39,8 @@ public class CitiesController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/v1/city")
-    public ResponseEntity<CityDto> getByName(@RequestParam("name") String name) {
+    @GetMapping("/v1/name/{name}")
+    public ResponseEntity<CityDto> getByName(@PathVariable String name) {
         return cityService.getByName(name)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

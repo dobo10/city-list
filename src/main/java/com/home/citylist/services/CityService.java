@@ -5,7 +5,9 @@ import com.home.citylist.dto.CityUpdateDto;
 import com.home.citylist.mappers.CityMapper;
 import com.home.citylist.models.City;
 import com.home.citylist.repositories.CityRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +27,9 @@ public class CityService {
         this.cityMapper = cityMapper;
     }
 
-    public Optional<List<CityDto>> getAll(Integer page, Integer size) {
-        Optional<List<City>> cities = cityRepository.findAllCities(PageRequest.of(page, size));
-        if (cities.get().isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(cityMapper.mapToCityDtos(cities.get()));
+    public List<CityDto> getAll(Integer page, Integer size) {
+        Page<City> cities = cityRepository.findAll(PageRequest.of(page, size, Sort.by("id")));
+        return cityMapper.mapToCityDtos(cities.getContent());
     }
 
     public Optional<CityDto> getById(long id) {
