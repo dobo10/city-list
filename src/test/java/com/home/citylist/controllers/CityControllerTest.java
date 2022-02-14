@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.home.citylist.dto.CityDto;
 import com.home.citylist.dto.CityUpdateDto;
+import com.home.citylist.facades.CityFacade;
 import com.home.citylist.services.CityService;
-import liquibase.repackaged.org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.home.citylist.common.TestUtils.constructCityDto;
+import static com.home.citylist.common.TestUtils.constructUpdateDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -29,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(CityController.class)
 class CityControllerTest {
 
-    private static final Long CITY_ID = 1L;
     private static final String API_ROOT_PATH = "/cities";
 
     @Autowired
@@ -41,12 +42,15 @@ class CityControllerTest {
     @MockBean
     private CityService cityService;
 
+    @MockBean
+    private CityFacade cityFacade;
+
     @Test
     void getAllCities_shouldReturnCitiesWithStatusOk() throws Exception {
         CityDto firstCity = constructCityDto();
         CityDto secondCity = constructCityDto();
         List<CityDto> cityDtoList = Arrays.asList(firstCity, secondCity);
-        when(cityService.getAll(0, 5)).thenReturn(cityDtoList);
+        when(cityFacade.getAll(0, 5)).thenReturn(cityDtoList);
 
         MvcResult result = this.mockMvc.perform(get(API_ROOT_PATH + "/v1"))
                 .andExpect(status().isOk()).andReturn();
@@ -72,9 +76,9 @@ class CityControllerTest {
     @Test
     void getCity_shouldReturnCityWithStatusOk() throws Exception {
         CityDto cityDto = constructCityDto();
-        when(cityService.getById(CITY_ID)).thenReturn(Optional.of(cityDto));
+        when(cityFacade.getCity(cityDto.id())).thenReturn(Optional.of(cityDto));
 
-        MvcResult result = this.mockMvc.perform(get(API_ROOT_PATH + "/v1/{id}", CITY_ID))
+        MvcResult result = this.mockMvc.perform(get(API_ROOT_PATH + "/v1/{id}", cityDto.id()))
                 .andExpect(status().isOk()).andReturn();
 
         CityDto cityFound = objectMapper.readValue(result.getResponse().getContentAsString(), CityDto.class);
@@ -87,13 +91,13 @@ class CityControllerTest {
     void getCity_whenNotFoundById_shouldReturnStatusNotFound() throws Exception {
         when(cityService.getById(1)).thenReturn(Optional.empty());
 
-        this.mockMvc.perform(get(API_ROOT_PATH + "/v1/{id}", CITY_ID)).andExpect(status().isNotFound());
+        this.mockMvc.perform(get(API_ROOT_PATH + "/v1/{id}", 1)).andExpect(status().isNotFound());
     }
 
     @Test
     void getByName_shouldReturnCityWithStatusOk() throws Exception {
         CityDto cityDto = constructCityDto();
-        when(cityService.getByName(any())).thenReturn(Optional.of(cityDto));
+        when(cityFacade.getByName(any())).thenReturn(Optional.of(cityDto));
 
         MvcResult result = this.mockMvc.perform(get(API_ROOT_PATH + "/v1/name/{name}", cityDto.name()))
                 .andExpect(status().isOk()).andReturn();
@@ -116,7 +120,7 @@ class CityControllerTest {
         CityDto cityDto = constructCityDto();
         CityUpdateDto updateDto = constructUpdateDto();
         String requestBody = objectMapper.writeValueAsString(updateDto);
-        when(cityService.update(updateDto)).thenReturn(Optional.of(cityDto));
+        when(cityFacade.update(updateDto)).thenReturn(Optional.of(cityDto));
 
         MvcResult result = this.mockMvc.perform(put(API_ROOT_PATH + "/v1")
                         .content(requestBody)
@@ -144,23 +148,11 @@ class CityControllerTest {
     void update_whenCityNotfound_shouldReturnStatusNotFound() throws Exception {
         CityUpdateDto updateDto = constructUpdateDto();
         String requestBody = objectMapper.writeValueAsString(updateDto);
-        when(cityService.update(updateDto)).thenReturn(Optional.empty());
+        when(cityFacade.update(updateDto)).thenReturn(Optional.empty());
 
         this.mockMvc.perform(put(API_ROOT_PATH + "/v1")
                         .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-    }
-
-    private CityDto constructCityDto() {
-        return new CityDto(CITY_ID,
-                RandomStringUtils.randomAlphabetic(10),
-                RandomStringUtils.randomAlphabetic(20));
-    }
-    
-    private CityUpdateDto constructUpdateDto() {
-        return new CityUpdateDto(CITY_ID,
-                RandomStringUtils.randomAlphabetic(5),
-                RandomStringUtils.randomAlphabetic(10));
     }
 }
