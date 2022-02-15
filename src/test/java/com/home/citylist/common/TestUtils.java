@@ -14,19 +14,19 @@ public final class TestUtils {
     public static City constructCity() {
         return new City()
                 .setId(1)
-                .setName(RandomStringUtils.randomAlphabetic(15))
-                .setPhoto(RandomStringUtils.randomAlphabetic(25));
+                .setName("Tokyo")
+                .setPhoto("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku_2009_January.jpg/500px-Skyscrapers_of_Shinjuku_2009_January.jpg");
     }
 
     public static CityDto constructCityDto() {
-        return new CityDto(1,
-                RandomStringUtils.randomAlphabetic(10),
-                RandomStringUtils.randomAlphabetic(20));
+        return new CityDto(2,
+                "Jakarta",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Jakarta_Pictures-1.jpg/327px-Jakarta_Pictures-1.jpg");
     }
 
     public static CityUpdateDto constructUpdateDto() {
-        return new CityUpdateDto(1,
-                RandomStringUtils.randomAlphabetic(5),
-                RandomStringUtils.randomAlphabetic(10));
+        return new CityUpdateDto(3,
+                "Bangkok",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Bangkok_Montage_2021.jpg/375px-Bangkok_Montage_2021.jpg");
     }
 }
