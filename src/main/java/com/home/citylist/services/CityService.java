@@ -8,7 +8,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,9 +20,8 @@ public class CityService {
         this.cityRepository = cityRepository;
     }
 
-    public List<City> getAll(Integer page, Integer size) {
-        Page<City> cities = cityRepository.findAll(PageRequest.of(page, size, Sort.by("id")));
-        return cities.getContent();
+    public Page<City> getAll(Integer page, Integer size) {
+        return cityRepository.findAll(PageRequest.of(page, size, Sort.by("id")));
     }
 
     public Optional<City> getById(long id) {

@@ -5,10 +5,11 @@ import com.home.citylist.dto.CityUpdateDto;
 import com.home.citylist.mappers.CityMapper;
 import com.home.citylist.models.City;
 import com.home.citylist.services.CityService;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -24,9 +25,10 @@ public class CityFacade {
         this.cityMapper = cityMapper;
     }
 
-    public List<CityDto> getAll(Integer page, Integer size) {
-        List<City> cities = cityService.getAll(page, size);
-        return cityMapper.mapToCityDtos(cities);
+    public ResponseEntity getAll(Integer page, Integer size) {
+        Page<City> cities = cityService.getAll(page, size);
+        Page<CityDto> cityDtos = cities.map(cityMapper::mapToCityDto);
+        return ResponseEntity.ok(cityDtos);
     }
 
     public Optional<CityDto> getCity(long id) {

@@ -42,10 +42,10 @@ class CityServiceTest {
         Page<City> pageResult = new PageImpl<>(cities, pageRequest, cities.size());
         when(cityRepository.findAll(pageRequest)).thenReturn(pageResult);
 
-        List<City> result = serviceToTest.getAll(offset, limit);
+        Page<City> result = serviceToTest.getAll(offset, limit);
 
-        assertThat(result.get(0).getId()).isEqualTo(city.getId());
-        assertThat(result.get(0).getName()).isEqualTo(city.getName());
+        assertThat(result.getContent().get(0).getId()).isEqualTo(city.getId());
+        assertThat(result.getContent().get(0).getName()).isEqualTo(city.getName());
     }
 
     @Test
@@ -56,9 +56,9 @@ class CityServiceTest {
         Page<City> pageResult = new PageImpl<>(new ArrayList<>(), pageRequest, 0);
         when(cityRepository.findAll(pageRequest)).thenReturn(pageResult);
 
-        List<City> result = serviceToTest.getAll(offset, limit);
+        Page<City> result = serviceToTest.getAll(offset, limit);
 
-        assertThat(result.size()).isZero();
+        assertThat(result.getContent().size()).isZero();
     }
 
     @Test

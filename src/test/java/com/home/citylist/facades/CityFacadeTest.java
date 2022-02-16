@@ -10,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -73,17 +77,21 @@ class CityFacadeTest {
         List<City> cities = Arrays.asList(firstCity, secondCity);
         CityDto firstCityDto = constructCityDto();
         CityDto secondCityDto = constructCityDto();
-        List<CityDto> cityDtos = Arrays.asList(firstCityDto, secondCityDto);
-        when(cityService.getAll(offset, limit)).thenReturn(cities);
-        when(cityMapper.mapToCityDtos(cities)).thenReturn(cityDtos);
+        PageRequest pageRequest = PageRequest.of(offset, limit);
+        Page<City> pageResult = new PageImpl<>(cities, pageRequest, cities.size());
+        when(cityService.getAll(offset, limit)).thenReturn(pageResult);
+        when(cityMapper.mapToCityDto(firstCity)).thenReturn(firstCityDto);
+        when(cityMapper.mapToCityDto(secondCity)).thenReturn(secondCityDto);
 
-        List<CityDto> citiesFound = cityFacade.getAll(offset, limit);
+        ResponseEntity citiesFound = cityFacade.getAll(offset, limit);
 
-        assertThat(citiesFound).isNotEmpty();
-        assertThat(citiesFound.get(0).name()).isEqualTo(firstCityDto.name());
-        assertThat(citiesFound.get(0).imageUrl()).isEqualTo(firstCityDto.imageUrl());
-        assertThat(citiesFound.get(1).name()).isEqualTo(secondCityDto.name());
-        assertThat(citiesFound.get(1).imageUrl()).isEqualTo(secondCityDto.imageUrl());
+        Page<CityDto> foundDtosList = (Page<CityDto>) citiesFound.getBody();
+        assertThat(foundDtosList).isNotEmpty();
+        assertThat(foundDtosList.getTotalElements()).isEqualTo(2);
+        assertThat(foundDtosList.getContent().get(0).name()).isEqualTo(firstCityDto.name());
+        assertThat(foundDtosList.getContent().get(0).imageUrl()).isEqualTo(firstCityDto.imageUrl());
+        assertThat(foundDtosList.getContent().get(1).name()).isEqualTo(secondCityDto.name());
+        assertThat(foundDtosList.getContent().get(1).imageUrl()).isEqualTo(secondCityDto.imageUrl());
     }
 
     @Test

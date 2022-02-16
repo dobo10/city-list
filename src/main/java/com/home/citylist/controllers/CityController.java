@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/cities", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -27,7 +26,7 @@ public class CityController {
     }
 
     @GetMapping("v1")
-    public List<CityDto> getCities(
+    public ResponseEntity getCities(
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(value = "size", required = false, defaultValue = "5") Integer size) {
         return cityFacade.getAll(page, size);

@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.home.citylist.dto.CityDto;
 import com.home.citylist.dto.CityUpdateDto;
 import com.home.citylist.facades.CityFacade;
-import com.home.citylist.services.CityService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -40,9 +41,6 @@ class CityControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private CityService cityService;
-
-    @MockBean
     private CityFacade cityFacade;
 
     @Test
@@ -50,7 +48,8 @@ class CityControllerTest {
         CityDto firstCity = constructCityDto();
         CityDto secondCity = constructCityDto();
         List<CityDto> cityDtoList = Arrays.asList(firstCity, secondCity);
-        when(cityFacade.getAll(0, 5)).thenReturn(cityDtoList);
+        ResponseEntity responseEntity = new ResponseEntity(cityDtoList, HttpStatus.OK);
+        when(cityFacade.getAll(0, 5)).thenReturn(responseEntity);
 
         MvcResult result = this.mockMvc.perform(get(API_ROOT_PATH + "/v1"))
                 .andExpect(status().isOk()).andReturn();
@@ -65,7 +64,7 @@ class CityControllerTest {
 
     @Test
     void getAllCities_whenNoCitiesFound_shouldReturnStatusNotFound() throws Exception {
-        when(cityService.getAll(0, 5)).thenReturn(new ArrayList<>());
+        when(cityFacade.getAll(0, 5)).thenReturn(new ResponseEntity(new ArrayList<>(), HttpStatus.OK));
 
         MvcResult result = this.mockMvc.perform(get(API_ROOT_PATH + "/v1"))
                 .andExpect(status().isOk()).andReturn();
@@ -89,7 +88,7 @@ class CityControllerTest {
 
     @Test
     void getCity_whenNotFoundById_shouldReturnStatusNotFound() throws Exception {
-        when(cityService.getById(1)).thenReturn(Optional.empty());
+        when(cityFacade.getCity(1)).thenReturn(Optional.empty());
 
         this.mockMvc.perform(get(API_ROOT_PATH + "/v1/{id}", 1)).andExpect(status().isNotFound());
     }
@@ -110,7 +109,7 @@ class CityControllerTest {
 
     @Test
     void getByName_whenCityNotfound_shouldReturnStatusNotFound() throws Exception {
-        when(cityService.getByName(any())).thenReturn(Optional.empty());
+        when(cityFacade.getByName(any())).thenReturn(Optional.empty());
 
         this.mockMvc.perform(get(API_ROOT_PATH + "/v1/name/testCity")).andExpect(status().isNotFound());
     }

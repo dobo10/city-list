@@ -23,7 +23,7 @@
 
 </mat-table>
 
-<mat-paginator [length]="1000"
+<mat-paginator [length]="totalElements"
                [pageSize]="3"
                [pageSizeOptions]="[3, 5, 10]"
                (page)="onPageChange($event)">
