@@ -42,12 +42,8 @@ export class CityComponent implements OnInit {
   }
 
   editCity(f: NgForm) {
-    console.log(f.value);
-    console.log(f.value.name);
-    console.log(f.value.url);
-    console.log(f.value.id);
     const newCity = {
-      id: f.value.id,
+      id: this.foundCity.id,
       name: f.value.name,
       photo: f.value.url
     }
