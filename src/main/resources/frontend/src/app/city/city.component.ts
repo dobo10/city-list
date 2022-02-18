@@ -12,7 +12,7 @@ import {NgForm} from "@angular/forms";
 export class CityComponent implements OnInit {
   cities: any | undefined;
   foundCity!: City;
-  displayedColumns = ["Id", "Name", "Url"];
+  displayedColumns = ["Name", "Url"];
   editFormVisible: boolean = false;
   totalElements: number;
 
@@ -58,5 +58,10 @@ export class CityComponent implements OnInit {
 
   openEditForm() {
     this.editFormVisible = true;
+  }
+
+  getRecord(city: City) {
+    //TODO: redirect to edit page
+    console.log(city)
   }
 }

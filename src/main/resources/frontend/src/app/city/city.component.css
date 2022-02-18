@@ -18,3 +18,22 @@
   display: block;
   width: 60%;
 }
+
+.header-spacer {
+  flex: 1 1 auto;
+}
+
+.cities-table-card {
+  margin: 2% auto;
+  max-width: 500px;
+}
+
+.search-city-label {
+  font-size: 14px;
+  color: darkgrey;
+}
+
+.edit-city {
+  margin: 2% auto;
+  max-width: 500px;
+}

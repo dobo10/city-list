@@ -1,45 +1,45 @@
-<mat-table class="lessons-table mat-elevation-z8" [dataSource]="cities">
+<!-- header -->
+<mat-toolbar>
+  <span>City List</span>
+  <span class="header-spacer"></span>
 
-  <ng-container matColumnDef="Id">
-    <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
-    <mat-cell *matCellDef="let city">{{city.id}}</mat-cell>
-  </ng-container>
+  <mat-form-field appearance="standard">
+    <mat-label class="search-city-label">search city</mat-label>
+    <input matInput #findCity>
+  </mat-form-field>
 
-  <ng-container matColumnDef="Name">
-    <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-    <mat-cell class="duration-cell"
-              *matCellDef="let city">{{city.name}}</mat-cell>
-  </ng-container>
+  <div class="button-row">
+    <button mat-raised-button color="primary" (click)="searchCity(findCity.value)">Find City</button>
+    <button mat-stroked-button color="primary" *ngIf="foundCity" (click)="openEditForm()">Edit City</button>
+  </div>
 
-  <ng-container matColumnDef="Url">
-    <mat-header-cell *matHeaderCellDef>Photo</mat-header-cell>
-    <mat-cell class="duration-cell"
-              *matCellDef="let city"><img width="75px" height="75px" src="{{city.imageUrl}}"/></mat-cell>
-  </ng-container>
+</mat-toolbar>
 
-  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+<!-- cities table-->
+<mat-card class="cities-table-card">
+  <mat-table class="lessons-table mat-elevation-z8" [dataSource]="cities">
+    <ng-container matColumnDef="Name">
+      <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+      <mat-cell class="duration-cell" *matCellDef="let city">{{city.name}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Url">
+      <mat-header-cell *matHeaderCellDef>Photo</mat-header-cell>
+      <mat-cell class="duration-cell" *matCellDef="let city">
+        <img width="75px" height="75px" src="{{city.imageUrl}}"/>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns" (click)="getRecord(row)"></mat-row>
+  </mat-table>
 
-  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  <mat-paginator [length]="totalElements"
+                 [pageSize]="3"
+                 [pageSizeOptions]="[3, 5, 10]"
+                 (page)="onPageChange($event)">
+  </mat-paginator>
+</mat-card>
 
-</mat-table>
-
-<mat-paginator [length]="totalElements"
-               [pageSize]="3"
-               [pageSizeOptions]="[3, 5, 10]"
-               (page)="onPageChange($event)">
-</mat-paginator>
-
-<mat-form-field class="example-full-width" appearance="fill">
-  <mat-label>City</mat-label>
-  <input matInput placeholder="Ex. San Francisco" #findCity>
-</mat-form-field>
-
-<div class="button-row">
-  <button mat-raised-button color="primary" (click)="searchCity(findCity.value)">Find City</button>
-  <button mat-stroked-button color="primary" *ngIf="foundCity" (click)="openEditForm()">Edit City</button>
-</div>
-
-<div *ngIf="editFormVisible">
+<div class="edit-city" *ngIf="editFormVisible">
   <form #f="ngForm" (ngSubmit)="editCity(f)" novalidate>
     <mat-form-field appearance="fill">
       <mat-label>Edit City name</mat-label>
@@ -55,7 +55,7 @@
   </form>
 </div>
 
-<mat-card class="example-card" *ngIf="foundCity">
+<mat-card class="edit-city" *ngIf="foundCity">
   <mat-card-header>
     <div mat-card-avatar class="example-header-image"></div>
     <mat-card-title>{{foundCity.name}}</mat-card-title>
