@@ -1,0 +1,28 @@
+<!-- header -->
+<mat-toolbar>
+  <span>City Details</span>
+</mat-toolbar>
+
+<div class="edit-city">
+  <form #f="ngForm" (ngSubmit)="editCity(f)" novalidate>
+    <mat-form-field appearance="fill">
+      <mat-label>Edit City name</mat-label>
+      <input matInput type="text" ngModel name="name" [(ngModel)]="city.name">
+    </mat-form-field>
+
+    <mat-form-field class="edit-url-field" appearance="fill">
+      <mat-label>Edit City URL</mat-label>
+      <input matInput type="text" ngModel name="url" [(ngModel)]="city.imageUrl">
+    </mat-form-field>
+
+    <button mat-raised-button color="warn">Save Changes</button>
+  </form>
+</div>
+
+<mat-card class="edit-city">
+<!--  <mat-card-header>-->
+<!--    <div mat-card-avatar></div>-->
+<!--    <mat-card-title>{{city.name}}</mat-card-title>-->
+<!--  </mat-card-header>-->
+  <img class="image-container" mat-card-image src="{{city.imageUrl}}">
+</mat-card>

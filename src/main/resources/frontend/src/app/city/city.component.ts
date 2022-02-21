@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CityService } from '../services/city.service';
-import {MatPaginator, PageEvent} from "@angular/material/paginator";
-import {City} from "../models/city.model";
-import {NgForm} from "@angular/forms";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { City } from "../models/city.model";
+import { NgForm } from "@angular/forms";
 
 @Component({
   selector: 'app-city',
@@ -40,6 +40,10 @@ export class CityComponent implements OnInit {
     if (name.length > 1) {
       this.service.findByName(name).subscribe(data => {
         this.foundCity = data;
+
+        this.cities = [];
+        this.cities.push(this.foundCity);
+        this.totalElements = 1;
       });
     }
   }
@@ -60,8 +64,4 @@ export class CityComponent implements OnInit {
     this.editFormVisible = true;
   }
 
-  getRecord(city: City) {
-    //TODO: redirect to edit page
-    console.log(city)
-  }
 }

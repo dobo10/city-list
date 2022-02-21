@@ -29,39 +29,18 @@
       </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns" (click)="getRecord(row)"></mat-row>
+    <mat-row
+      class="cities-table-row"
+      *matRowDef="let city;
+      columns: displayedColumns"
+      [routerLink]="['/details', city.id ]">
+    </mat-row>
   </mat-table>
 
-  <mat-paginator [length]="totalElements"
+  <mat-paginator *ngIf="totalElements > 1"
+                 [length]="totalElements"
                  [pageSize]="3"
                  [pageSizeOptions]="[3, 5, 10]"
                  (page)="onPageChange($event)">
   </mat-paginator>
 </mat-card>
-
-<div class="edit-city" *ngIf="editFormVisible">
-  <form #f="ngForm" (ngSubmit)="editCity(f)" novalidate>
-    <mat-form-field appearance="fill">
-      <mat-label>Edit City name</mat-label>
-      <input matInput type="text" ngModel name="name" [(ngModel)]="foundCity.name">
-    </mat-form-field>
-
-    <mat-form-field class="edit-url-field" appearance="fill">
-      <mat-label>Edit City URL</mat-label>
-      <input matInput type="text" ngModel name="url" [(ngModel)]="foundCity.imageUrl">
-    </mat-form-field>
-
-    <button mat-raised-button color="warn">Save Changes</button>
-  </form>
-</div>
-
-<mat-card class="edit-city" *ngIf="foundCity">
-  <mat-card-header>
-    <div mat-card-avatar class="example-header-image"></div>
-    <mat-card-title>{{foundCity.name}}</mat-card-title>
-  </mat-card-header>
-  <img class="image-container" mat-card-image src="{{foundCity.imageUrl}}">
-</mat-card>
-
-
-
