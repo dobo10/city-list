@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {map, Observable} from 'rxjs';
-import {City} from "../models/city.model";
-import {Page} from "../models/page.model";
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
+import { City } from "../models/city.model";
+import { Page } from "../models/page.model";
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +25,10 @@ export class CityService {
 
   editCity(city: object) : Observable<City> {
     return this.http.put("cities/v1", city).pipe(map(res => <City>res));
+  }
+
+  getById(id: string) : Observable<City> {
+    return this.http.get<City>("cities/v1/" + id);
   }
 
 }
