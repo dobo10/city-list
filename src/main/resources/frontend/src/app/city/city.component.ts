@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CityService } from '../services/city.service';
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { City } from "../models/city.model";
-import { NgForm } from "@angular/forms";
 
 @Component({
   selector: 'app-city',
@@ -13,7 +12,6 @@ export class CityComponent implements OnInit {
   cities: any | undefined;
   foundCity!: City;
   displayedColumns = ["Name", "Url"];
-  editFormVisible: boolean = false;
   totalElements: number;
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
@@ -46,22 +44,6 @@ export class CityComponent implements OnInit {
         this.totalElements = 1;
       });
     }
-  }
-
-  editCity(f: NgForm) {
-    const newCity = {
-      id: this.foundCity.id,
-      name: f.value.name,
-      photo: f.value.url
-    }
-    this.service.editCity(newCity).subscribe(data => {
-      this.foundCity = data;
-    });
-    this.editFormVisible = false;
-  }
-
-  openEditForm() {
-    this.editFormVisible = true;
   }
 
 }
